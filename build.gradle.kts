@@ -1,6 +1,9 @@
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
+val ktorVersion: String by project
+val kotlinVersion: String by project
+val logbackVersion: String by project
+val koinKtor: String by project
+val kMongoVersion: String by project
+val commonsCodecVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.8.10"
@@ -22,11 +25,32 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
-    implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
-    implementation("ch.qos.logback:logback-classic:$logback_version")
-    testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
+
+    // Authentication
+    implementation("io.ktor:ktor-server-auth-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth-jwt-jvm:$ktorVersion")
+
+    // Logging
+    implementation("io.ktor:ktor-server-call-logging-jvm:$ktorVersion")
+
+    // Testing dependencies
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+
+    // Koin for Ktor
+    implementation("io.insert-koin:koin-ktor:$koinKtor")
+    implementation("io.insert-koin:koin-logger-slf4j:$koinKtor")
+
+    // MongoDB
+    implementation("org.litote.kmongo:kmongo:$kMongoVersion")
+    implementation("org.litote.kmongo:kmongo-coroutine:$kMongoVersion")
+
+    implementation("commons-codec:commons-codec:$commonsCodecVersion")
 }
