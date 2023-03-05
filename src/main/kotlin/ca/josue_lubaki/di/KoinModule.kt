@@ -55,7 +55,7 @@ val KoinModule = module {
             secret = System.getenv("JWT_SECRET"),
             issuer = System.getenv("JWT_ISSUER"),
             audience = System.getenv("JWT_AUDIENCE"),
-            expiresIn = 1000L * 60L * 60L * 24L * System.getenv("JWT_EXPIRATION_TIME").toLong(),
+            expiresIn = 1000L * 60L * System.getenv("JWT_EXPIRATION_TIME").toLong(),
             role = Role.USER
         )
     }
