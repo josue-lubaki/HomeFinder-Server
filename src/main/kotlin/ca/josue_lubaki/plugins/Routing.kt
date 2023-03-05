@@ -14,6 +14,7 @@ fun Application.configureRouting() {
                 call.respondText("Welcome to HomeFinder App !")
             }
 
+            // Auth routes
             route("auth/") {
                 register()
                 login()
@@ -27,6 +28,7 @@ fun Application.configureRouting() {
                     route("admin") {
                         housesRoutes()
                         ownerRoutes()
+                        addressRoutes()
                     }
                 }
             }

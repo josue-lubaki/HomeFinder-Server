@@ -11,12 +11,12 @@ import org.bson.types.ObjectId
  */
 data class Address (
     @BsonId val id: ObjectId = ObjectId(),
-    val number: String?,
-    val street: String?,
-    val city: String?,
-    val province: String?,
-    val postalCode: String?,
-    val country: String?
+    val number: String,
+    val street: String,
+    val city: String,
+    val province: String,
+    val postalCode: String,
+    val country: String
 ) {
     fun toResponse(): AddressResponse {
         return AddressResponse(

@@ -8,6 +8,7 @@ import ca.josue_lubaki.data.models.HouseType
 import ca.josue_lubaki.data.models.Owner
 import ca.josue_lubaki.data.models.Role
 import ca.josue_lubaki.data.request.house.HouseRequest
+import ca.josue_lubaki.data.response.address.AddressResponse
 import ca.josue_lubaki.data.response.owner.OwnerResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -45,7 +46,7 @@ fun Route.housesRoutes() {
             val address = addressDataSource.getAddressByStreetAndNumber(request.street, request.number)
 
             if (owner != null && address != null){
-                val house = houseDataSource.getHouseByOwnerAndAddress(owner.toDomain(), address)
+                val house = houseDataSource.getHouseByOwnerAndAddress(owner.toDomain(), address.toDomain())
                 if (house != null){
                     call.respond(HttpStatusCode.Conflict, "This house already exists")
                     return@post
@@ -129,8 +130,8 @@ fun Route.housesRoutes() {
                 province = request.province,
                 country = request.country,
                 postalCode = request.postalCode
-            ) ?: Address(
-                id = ObjectId(house.address.id),
+            ) ?: AddressResponse(
+                id = house.address.id,
                 street = request.street,
                 number = request.number,
                 city = request.city,
@@ -148,7 +149,7 @@ fun Route.housesRoutes() {
             val updatedToHouse = houseDataSource.getHouseById(id)?.copy(
                 id = id,
                 owner = owner,
-                address = address.toResponse(),
+                address = address,
                 price = request.price,
                 description = request.description,
                 type = HouseType.valueOf(request.type).name,

@@ -1,4 +1,4 @@
-package ca.josue_lubaki.data.response.address
+package ca.josue_lubaki.data.request.address
 
 import ca.josue_lubaki.data.models.Address
 import kotlinx.serialization.Serializable
@@ -9,8 +9,7 @@ import kotlinx.serialization.Serializable
  * @since 2023-03-05
  */
 @Serializable
-data class AddressResponse (
-    val id: String,
+data class AddressRequest(
     val number: String,
     val street: String,
     val city: String,
@@ -18,7 +17,7 @@ data class AddressResponse (
     val postalCode: String,
     val country: String
 ) {
-    fun toDomain(): Address {
+    fun toAddress(): Address {
         return Address(
             number = number,
             street = street,

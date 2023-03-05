@@ -18,7 +18,9 @@ import io.ktor.util.pipeline.*
 suspend fun PipelineContext<Unit, ApplicationCall>.isAdmin(): Boolean {
     val principal = call.authentication.principal<JWTPrincipal>()
     val role = principal?.payload?.getClaim("role")?.asString()
+
     if (role == Role.ADMIN.name) { return true }
+
     call.respond(HttpStatusCode.Forbidden, "You are not allowed to access this resource, only admins can do that")
     return false
 }
