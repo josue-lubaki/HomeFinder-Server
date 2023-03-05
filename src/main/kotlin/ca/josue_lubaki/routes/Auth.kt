@@ -32,10 +32,7 @@ fun Route.register() {
 
     post("register") {
         val request = kotlin.runCatching { call.receiveNullable<RegisterRequest>() }.getOrNull() ?: kotlin.run {
-            call.respond(
-                message = "Invalid request",
-                status = HttpStatusCode.BadRequest
-            )
+            call.respond(HttpStatusCode.BadRequest,"Invalid request")
             return@post
         }
 
@@ -44,6 +41,12 @@ fun Route.register() {
 
         if(areFieldsBlank || isPasswordTooShort) {
             call.respond(HttpStatusCode.Conflict)
+            return@post
+        }
+
+        val userExists = userDataSource.getUserByUsername(request.username)
+        if(userExists != null) {
+            call.respond(HttpStatusCode.Conflict,"User already exists")
             return@post
         }
 
@@ -75,10 +78,7 @@ fun Route.login() {
 
     post("login") {
         val request = kotlin.runCatching { call.receiveNullable<AuthRequest>() }.getOrNull() ?: kotlin.run {
-            call.respond(
-                message = "Invalid request",
-                status = HttpStatusCode.BadRequest
-            )
+            call.respond(HttpStatusCode.BadRequest, "Invalid request")
             return@post
         }
 
@@ -96,10 +96,7 @@ fun Route.login() {
             )
         )
         if(!isPasswordCorrect) {
-            call.respond (
-                status = HttpStatusCode.Conflict,
-                message = "Incorrect username or password"
-            )
+            call.respond (HttpStatusCode.Conflict, "Incorrect username or password")
             return@post
         }
 
@@ -113,18 +110,13 @@ fun Route.login() {
             )
         )
 
-        call.respond (
-            status = HttpStatusCode.OK,
-            message = AuthResponse(token)
-        )
+        call.respond (HttpStatusCode.OK, AuthResponse(token))
     }
 }
 
 fun Route.authenticate() {
     authenticate {
-        get("authenticate"){
-            call.respond(HttpStatusCode.OK)
-        }
+        get("authenticate"){ call.respond(HttpStatusCode.OK) }
     }
 }
 
@@ -133,10 +125,7 @@ fun Route.getSecretInfo() {
         get("secret"){
             val principal = call.principal<JWTPrincipal>()
             val userId = principal?.getClaim("userId", String::class)
-            call.respond(
-                status = HttpStatusCode.OK,
-                message = "Your userId is $userId"
-            )
+            call.respond(HttpStatusCode.OK, "Your userId is $userId")
         }
     }
 }

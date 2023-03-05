@@ -1,6 +1,5 @@
 package ca.josue_lubaki.data.models
 
-import ca.josue_lubaki.data.dto.UserDTO
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 
@@ -17,12 +16,4 @@ data class User (
     val firstName: String,
     val lastName: String,
     val salt: String
-) {
-    fun toDTO() = UserDTO (
-        username = username,
-        password = password,
-        email = email,
-        firstName = firstName,
-        lastName = lastName
-    )
-}
+)

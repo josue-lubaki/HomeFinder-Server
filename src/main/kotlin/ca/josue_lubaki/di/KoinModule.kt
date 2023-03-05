@@ -21,7 +21,7 @@ val KoinModule = module {
     val mongoDBPassword = System.getenv("MONGODB_PASSWORD")
     val dbName = System.getenv("MONGODB_DB_NAME")
     val db = KMongo.createClient(
-        "mongodb+srv://$mongoDBUsername:$mongoDBPassword@cluster1.ebbpcnk.mongodb.net/$dbName?retryWrites=true&w=majority&keepAlive=true"
+        "mongodb+srv://$mongoDBUsername:$mongoDBPassword@cluster1.ebbpcnk.mongodb.net/$dbName?retryWrites=true&w=majority"
     ).coroutine.getDatabase(dbName)
 
     single { db }
