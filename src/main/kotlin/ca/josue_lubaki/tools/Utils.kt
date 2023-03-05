@@ -1,6 +1,6 @@
 package ca.josue_lubaki.tools
 
-import ca.josue_lubaki.data.request.RegisterRequest
+import ca.josue_lubaki.data.request.auth.RegisterRequest
 
 /**
  * @author Josue Lubaki

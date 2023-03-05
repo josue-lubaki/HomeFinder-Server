@@ -2,9 +2,9 @@ package ca.josue_lubaki.routes
 
 import ca.josue_lubaki.data.datasource.UserDataSource
 import ca.josue_lubaki.data.models.User
-import ca.josue_lubaki.data.request.AuthRequest
-import ca.josue_lubaki.data.request.RegisterRequest
-import ca.josue_lubaki.data.response.AuthResponse
+import ca.josue_lubaki.data.request.auth.AuthRequest
+import ca.josue_lubaki.data.request.auth.RegisterRequest
+import ca.josue_lubaki.data.response.auth.AuthResponse
 import ca.josue_lubaki.security.hashing.HashingService
 import ca.josue_lubaki.security.hashing.SaltedHash
 import ca.josue_lubaki.security.token.TokenClaim
@@ -57,7 +57,7 @@ fun Route.register() {
             salt = saltedHash.salt,
             email = request.email,
             firstName = request.firstName,
-            lastName = request.lastName,
+            lastName = request.lastName
         )
 
         val wasAcknowledged = userDataSource.insertUser(user)
@@ -106,6 +106,10 @@ fun Route.login() {
                 TokenClaim (
                     name = "userId",
                     value = user.id.toString()
+                ),
+                TokenClaim (
+                    name = "role",
+                    value = user.role.name
                 )
             )
         )
@@ -122,10 +126,15 @@ fun Route.authenticate() {
 
 fun Route.getSecretInfo() {
     authenticate {
-        get("secret"){
+        get("secret") {
             val principal = call.principal<JWTPrincipal>()
-            val userId = principal?.getClaim("userId", String::class)
-            call.respond(HttpStatusCode.OK, "Your userId is $userId")
+            val userId = principal?.payload?.getClaim("userId")?.asString()
+            val role = principal?.payload?.getClaim("role")?.asString()
+
+            call.respond(
+                status = HttpStatusCode.OK,
+                message= "User id: $userId, role: $role",
+            )
         }
     }
 }

@@ -1,4 +1,4 @@
-package ca.josue_lubaki.data.response
+package ca.josue_lubaki.data.response.auth
 
 import kotlinx.serialization.Serializable
 

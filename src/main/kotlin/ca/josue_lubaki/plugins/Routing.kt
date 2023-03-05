@@ -1,21 +1,35 @@
 package ca.josue_lubaki.plugins
 
-import ca.josue_lubaki.routes.authenticate
-import ca.josue_lubaki.routes.getSecretInfo
-import ca.josue_lubaki.routes.login
-import ca.josue_lubaki.routes.register
-import io.ktor.server.routing.*
-import io.ktor.server.response.*
+import ca.josue_lubaki.routes.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     routing {
-        get("/") {
-            call.respondText("Hello World!")
+
+        route("/"){
+            get {
+                call.respondText("Welcome to HomeFinder App !")
+            }
+
+            route("auth/") {
+                register()
+                login()
+            }
+
+            route("api/v1/") {
+                this.authenticate {
+                    getSecretInfo()
+                    authenticate()
+
+                    route("admin") {
+                        housesRoutes()
+                        ownerRoutes()
+                    }
+                }
+            }
         }
-        register()
-        login()
-        authenticate()
-        getSecretInfo()
     }
 }

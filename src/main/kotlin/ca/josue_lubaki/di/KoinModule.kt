@@ -1,7 +1,14 @@
 package ca.josue_lubaki.di
 
+import ca.josue_lubaki.data.datasource.AddressDataSource
+import ca.josue_lubaki.data.datasource.HouseDataSource
+import ca.josue_lubaki.data.datasource.OwnerDataSource
 import ca.josue_lubaki.data.datasource.UserDataSource
+import ca.josue_lubaki.data.datasource.impl.AddressDataSourceImpl
+import ca.josue_lubaki.data.datasource.impl.HouseDataSourceImpl
+import ca.josue_lubaki.data.datasource.impl.OwnerDataSourceImpl
 import ca.josue_lubaki.data.datasource.impl.UserDataSourceImpl
+import ca.josue_lubaki.data.models.Role
 import ca.josue_lubaki.security.hashing.HashingService
 import ca.josue_lubaki.security.hashing.SHA265HashingServiceImpl
 import ca.josue_lubaki.security.token.JwtToken
@@ -28,13 +35,28 @@ val KoinModule = module {
     single<UserDataSource> {
         UserDataSourceImpl(get())
     }
+
+    single<HouseDataSource> {
+        HouseDataSourceImpl(get())
+    }
+
+    single<OwnerDataSource> {
+        OwnerDataSourceImpl(get())
+    }
+
+    single<AddressDataSource> {
+        AddressDataSourceImpl(get())
+    }
+
+    // Token & Hashing Providers
     single<TokenService> { JwtToken() }
     single {
         TokenConfig(
             secret = System.getenv("JWT_SECRET"),
             issuer = System.getenv("JWT_ISSUER"),
             audience = System.getenv("JWT_AUDIENCE"),
-            expiresIn = 1000L * 60L * 60L * 24L * System.getenv("JWT_EXPIRATION_TIME").toLong()
+            expiresIn = 1000L * 60L * 60L * 24L * System.getenv("JWT_EXPIRATION_TIME").toLong(),
+            role = Role.USER
         )
     }
     single<HashingService> { SHA265HashingServiceImpl() }

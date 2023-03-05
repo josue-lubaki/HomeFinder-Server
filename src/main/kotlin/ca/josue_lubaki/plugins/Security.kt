@@ -1,5 +1,6 @@
 package ca.josue_lubaki.plugins
 
+import ca.josue_lubaki.data.models.Role
 import ca.josue_lubaki.security.token.TokenConfig
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -27,11 +28,14 @@ fun Application.configureSecurity() {
                     .require(Algorithm.HMAC256(config.secret))
                     .withAudience(config.audience)
                     .withIssuer(config.issuer)
+//                    .withClaim("role", Role.USER.name)
                     .build()
             )
 
             validate { credential ->
-                if(credential.payload.audience.contains(config.audience)) {
+                if(credential.payload.audience.contains(config.audience)
+                    && credential.payload.getClaim("role").asString() in listOf(Role.ADMIN.name, Role.USER.name)
+                ) {
                     JWTPrincipal(credential.payload)
                 } else {
                     null

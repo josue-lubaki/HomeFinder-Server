@@ -1,5 +1,7 @@
 package ca.josue_lubaki.security.token
 
+import ca.josue_lubaki.data.models.Role
+
 /**
  * @author Josue Lubaki
  * @version 1.0
@@ -11,4 +13,5 @@ data class TokenConfig (
     val audience: String,
     val expiresIn: Long,
     val secret: String,
+    val role: Role
 )
