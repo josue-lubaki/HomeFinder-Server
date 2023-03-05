@@ -1,0 +1,1 @@
+web: build/libs/HomeFinder-0.0.1.jar
