@@ -1,10 +1,12 @@
 package ca.josue_lubaki.plugins
 
+import ca.josue_lubaki.security.token.TokenConfig
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import org.koin.ktor.ext.inject
 
 /**
  * @author Josue Lubaki
@@ -12,13 +14,28 @@ import io.ktor.server.auth.jwt.*
  * @since 2023-03-04
  */
 
-fun Application.configureSecurity(){
+fun Application.configureSecurity() {
+
+    val config : TokenConfig by inject()
+
     authentication {
         jwt {
             realm = this@configureSecurity.environment.config.property("jwt.realm").getString()
 
-            validate {
-                UserIdPrincipal(it.payload.getClaim("username").asString())
+            verifier (
+                JWT
+                    .require(Algorithm.HMAC256(config.secret))
+                    .withAudience(config.audience)
+                    .withIssuer(config.issuer)
+                    .build()
+            )
+
+            validate { credential ->
+                if(credential.payload.audience.contains(config.audience)) {
+                    JWTPrincipal(credential.payload)
+                } else {
+                    null
+                }
             }
         }
     }
