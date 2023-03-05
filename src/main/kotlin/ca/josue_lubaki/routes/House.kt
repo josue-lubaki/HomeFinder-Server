@@ -109,7 +109,7 @@ fun Route.housesRoutes() {
             }
 
             if(houseResponse.isEmpty()){
-                call.respond(HttpStatusCode.NoContent, "No houses found")
+                call.respond(HttpStatusCode.OK, houseResponse)
                 return@get
             }
 

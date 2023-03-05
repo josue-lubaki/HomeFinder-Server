@@ -1,6 +1,8 @@
 package ca.josue_lubaki.routes
 
 import ca.josue_lubaki.data.datasource.AddressDataSource
+import ca.josue_lubaki.data.datasource.HouseDataSource
+import ca.josue_lubaki.data.datasource.OwnerDataSource
 import ca.josue_lubaki.data.request.address.AddressRequest
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -19,6 +21,8 @@ import org.koin.ktor.ext.inject
 fun Route.addressRoutes(){
 
     val addressDataSource : AddressDataSource by inject()
+    val houseDataSource : HouseDataSource by inject()
+    val ownerDataSource : OwnerDataSource by inject()
 
     route("addresses"){
 
@@ -107,6 +111,28 @@ fun Route.addressRoutes(){
             val address = addressDataSource.getAddressById(id)
             if(address == null){
                 call.respond(HttpStatusCode.NotFound, "Address not found")
+                return@delete
+            }
+
+            val house = houseDataSource.getHouseByAddressId(id) ?: run {
+                call.respond(HttpStatusCode.InternalServerError, "An error occurred")
+                return@delete
+            }
+            val owner = ownerDataSource.getOwnerById(house.owner) ?: run {
+                call.respond(HttpStatusCode.InternalServerError, "An error occurred")
+                return@delete
+            }
+
+            kotlin.runCatching {
+                val houseDeleted = houseDataSource.deleteHouse(house.id) ?: false
+                val ownerDeleted = ownerDataSource.deleteOwner(owner.id)
+
+                if(!houseDeleted || !ownerDeleted) {
+                    call.respond(HttpStatusCode.InternalServerError, "An error occurred")
+                    return@delete
+                }
+            }.getOrNull() ?: kotlin.run {
+                call.respond(HttpStatusCode.InternalServerError, "An error occurred")
                 return@delete
             }
 

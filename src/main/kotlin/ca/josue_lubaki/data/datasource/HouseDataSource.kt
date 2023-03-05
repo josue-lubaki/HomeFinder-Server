@@ -14,5 +14,6 @@ interface HouseDataSource {
     suspend fun getHouseByOwnerAndAddress(ownerId: String, addressId: String): HouseResponse?
     suspend fun insertHouse(house: House): Boolean
     suspend fun updateHouse(house: House): Boolean
-    suspend fun deleteHouse(id: String): Boolean
+    suspend fun deleteHouse(id: String): Boolean?
+    suspend fun getHouseByAddressId(id: String): HouseResponse?
 }

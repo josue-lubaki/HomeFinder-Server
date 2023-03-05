@@ -45,4 +45,8 @@ class HouseDataSourceImpl(
     override suspend fun deleteHouse(id: String): Boolean {
         return houses.deleteOne(Filters.eq("_id", ObjectId(id))).wasAcknowledged()
     }
+
+    override suspend fun getHouseByAddressId(id: String): HouseResponse? {
+        return houses.findOne(House::address eq id)?.toResponse()
+    }
 }
