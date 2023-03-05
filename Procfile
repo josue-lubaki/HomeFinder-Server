@@ -1,1 +1,1 @@
-web: build/libs/HomeFinder-all.jar
+web: ./build/install/HomeFinder-shadow/bin/HomeFinder
