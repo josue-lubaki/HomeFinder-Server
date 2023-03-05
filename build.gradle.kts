@@ -4,7 +4,6 @@ val logbackVersion: String by project
 val koinKtor: String by project
 val kMongoVersion: String by project
 val commonsCodecVersion: String by project
-val authVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.8.10"
@@ -34,8 +33,6 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
 
     // Authentication
-    implementation("io.ktor:ktor-auth:$authVersion")
-    implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-server-auth-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-auth-jwt-jvm:$ktorVersion")
 

@@ -22,15 +22,4 @@ data class Owner(
             phone = phone
         )
     }
-
-    fun toDomain(): Owner {
-        return Owner(
-            id = id,
-            username = username,
-            firstName = firstName,
-            lastName = lastName,
-            email = email,
-            phone = phone
-        )
-    }
 }

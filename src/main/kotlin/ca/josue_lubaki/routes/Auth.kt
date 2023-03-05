@@ -76,6 +76,8 @@ fun Route.login() {
     val tokenService : TokenService by inject()
     val tokenConfig : TokenConfig by inject()
 
+    // Authentification route
+    // http://localhost:8080/auth/login
     post("login") {
         val request = kotlin.runCatching { call.receiveNullable<AuthRequest>() }.getOrNull() ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest, "Invalid request")
@@ -118,12 +120,16 @@ fun Route.login() {
     }
 }
 
+// Check if the user is authenticated
+// http://localhost:8080/auth/authenticate
 fun Route.authenticate() {
     authenticate {
         get("authenticate"){ call.respond(HttpStatusCode.OK) }
     }
 }
 
+// Get the secret info of the user
+// http://localhost:8080/auth/secret
 fun Route.getSecretInfo() {
     authenticate {
         get("secret") {

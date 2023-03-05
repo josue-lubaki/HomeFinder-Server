@@ -14,17 +14,22 @@ fun Application.configureRouting() {
                 call.respondText("Welcome to HomeFinder App !")
             }
 
-            // Auth routes
+            // WhiteListed Routes
+            // http://localhost:8080/auth/register
             route("auth/") {
                 register()
                 login()
             }
 
+            // User Routes
+            // http://localhost:8080/api/v1/
             route("api/v1/") {
                 this.authenticate {
                     getSecretInfo()
                     authenticate()
 
+                    // Admin Routes
+                    // http://localhost:8080/api/v1/admin/
                     route("admin") {
                         housesRoutes()
                         ownerRoutes()

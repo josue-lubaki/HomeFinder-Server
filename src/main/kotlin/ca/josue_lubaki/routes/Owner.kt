@@ -1,12 +1,9 @@
 package ca.josue_lubaki.routes
 
 import ca.josue_lubaki.data.datasource.OwnerDataSource
-import ca.josue_lubaki.data.models.Role
 import ca.josue_lubaki.data.request.owner.OwnerRequest
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -23,6 +20,8 @@ fun Route.ownerRoutes() {
     route("owners"){
         val ownerDataSource : OwnerDataSource by inject()
 
+        // Create a new owner [POST]
+        // http://localhost:8080/api/v1/owners
         post {
             if (!isAdmin()) return@post
 
@@ -40,19 +39,20 @@ fun Route.ownerRoutes() {
 
             val ownerRequest = request.toOwner()
             val newOwner = ownerDataSource.insertOwner(ownerRequest)
-            if(newOwner){
-                call.respond(HttpStatusCode.Created, "Owner created")
-            } else {
-                call.respond(HttpStatusCode.InternalServerError, "An error occurred")
-            }
+            if(newOwner){ call.respond(HttpStatusCode.Created, "Owner created") }
+            else { call.respond(HttpStatusCode.InternalServerError, "An error occurred") }
         }
 
+        // Get all owners [GET]
+        // http://localhost:8080/api/v1/owners
         get {
             if (!isAdmin()) return@get
             val owners = ownerDataSource.getAllOwners()
             call.respond(owners)
         }
 
+        // Get a specific owner [GET]
+        // http://localhost:8080/api/v1/owners/{id}
         get("/{id}"){
             if (!isAdmin()) return@get
             val id = call.parameters["id"] ?: kotlin.run {
@@ -67,7 +67,8 @@ fun Route.ownerRoutes() {
             }
         }
 
-
+        // Update a specific owner [PUT]
+        // http://localhost:8080/api/v1/owners/{id}
         put("/{id}"){
             if (!isAdmin()) return@put
             val id = call.parameters["id"] ?: kotlin.run {
@@ -88,6 +89,8 @@ fun Route.ownerRoutes() {
             }
         }
 
+        // Delete a specific owner [DELETE]
+        // http://localhost:8080/api/v1/owners/{id}
         delete("/{id}"){
             if (!isAdmin()) return@delete
             val id = call.parameters["id"] ?: kotlin.run {

@@ -2,7 +2,6 @@ package ca.josue_lubaki.data.request.owner
 
 import ca.josue_lubaki.data.models.Owner
 import kotlinx.serialization.Serializable
-import org.bson.types.ObjectId
 
 /**
  * @author Josue Lubaki

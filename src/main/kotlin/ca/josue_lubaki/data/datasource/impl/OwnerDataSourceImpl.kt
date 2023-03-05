@@ -7,9 +7,6 @@ import com.mongodb.client.model.Filters
 import org.bson.types.ObjectId
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
-import org.litote.kmongo.findOneAndUpdateUpsert
-import org.litote.kmongo.replaceUpsert
-import org.litote.kmongo.upsert
 
 /**
  * @author Josue Lubaki

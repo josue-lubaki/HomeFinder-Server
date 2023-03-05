@@ -29,16 +29,4 @@ data class Address (
             country = country
         )
     }
-
-    fun toDomain(): Address {
-        return Address(
-            id = id,
-            number = number,
-            street = street,
-            city = city,
-            province = province,
-            postalCode = postalCode,
-            country = country
-        )
-    }
 }

@@ -1,14 +1,12 @@
 package ca.josue_lubaki.data.datasource.impl
 
 import ca.josue_lubaki.data.datasource.HouseDataSource
-import ca.josue_lubaki.data.models.Address
 import ca.josue_lubaki.data.models.House
-import ca.josue_lubaki.data.models.Owner
 import ca.josue_lubaki.data.response.house.HouseResponse
 import com.mongodb.client.model.Filters
 import org.bson.types.ObjectId
 import org.litote.kmongo.coroutine.CoroutineDatabase
-import org.litote.kmongo.replaceUpsert
+import org.litote.kmongo.eq
 
 /**
  * @author Josue Lubaki
@@ -29,9 +27,11 @@ class HouseDataSourceImpl(
         return houses.findOneById(ObjectId(id))?.toResponse()
     }
 
-    override suspend fun getHouseByOwnerAndAddress(owner: Owner, address: Address): HouseResponse? {
-        val house = houses.findOneById((address.id))
-        return if (house?.owner == owner) house.toResponse() else null
+    override suspend fun getHouseByOwnerAndAddress(ownerId: String, addressId: String): HouseResponse? {
+        return houses.findOne(
+            House::owner eq ownerId,
+            House::address eq addressId
+        )?.toResponse()
     }
 
     override suspend fun insertHouse(house: House): Boolean {

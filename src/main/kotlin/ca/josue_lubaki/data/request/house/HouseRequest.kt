@@ -1,11 +1,10 @@
 package ca.josue_lubaki.data.request.house
 
-import ca.josue_lubaki.data.models.Address
 import ca.josue_lubaki.data.models.House
 import ca.josue_lubaki.data.models.HouseType
-import ca.josue_lubaki.data.models.Owner
+import ca.josue_lubaki.data.response.address.AddressResponse
+import ca.josue_lubaki.data.response.owner.OwnerResponse
 import kotlinx.serialization.Serializable
-import org.bson.types.ObjectId
 
 /**
  * @author Josue Lubaki
@@ -14,7 +13,6 @@ import org.bson.types.ObjectId
  */
 @Serializable
 data class HouseRequest (
-    val id: String,
     val description : String,
     val images : List<String>,
     val price : Long,
@@ -36,32 +34,17 @@ data class HouseRequest (
     val ownerEmail : String,
     val ownerPhone : String,
 ){
-    fun toHouse() = House(
-        id = ObjectId(id),
+    fun toHouse(address : AddressResponse, owner : OwnerResponse) = House(
         description = description,
         images = images,
         price = price,
-        address = Address(
-            number = number,
-            street = street,
-            city = city,
-            province = province,
-            postalCode = postalCode,
-            country = country
-        ),
-        city = city,
+        address = address.id,
         bedrooms = bedrooms,
         bathrooms = bathrooms,
         area = area,
         type = HouseType.valueOf(type),
         yearBuilt = yearBuilt,
         pool = pool,
-        owner = Owner(
-            username = ownerUsername,
-            firstName = ownerFirstName,
-            lastName = ownerLastName,
-            email = ownerEmail,
-            phone = ownerPhone
-        )
+        owner = owner.id
     )
 }

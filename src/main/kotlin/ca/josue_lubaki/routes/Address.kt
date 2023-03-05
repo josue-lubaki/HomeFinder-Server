@@ -21,14 +21,17 @@ fun Route.addressRoutes(){
     val addressDataSource : AddressDataSource by inject()
 
     route("addresses"){
-        // Get all addresses
+
+        // Get all addresses [GET]
+        // http://localhost:8080/api/v1/addresses
         get {
             if(!isAdmin()) return@get
             val addresses = addressDataSource.getAllAddresses()
             call.respond(addresses)
         }
 
-        // Get address by id
+        // Get address by id [GET]
+        // http://localhost:8080/api/v1/addresses/{id}
         get("/{id}"){
             if(!isAdmin()) return@get
             val id = call.parameters["id"] ?: kotlin.run {
@@ -45,7 +48,8 @@ fun Route.addressRoutes(){
             }
         }
 
-        // Create new address
+        // Create new address [POST]
+        // http://localhost:8080/api/v1/addresses
         post {
             if(!isAdmin()) return@post
             val request = kotlin.runCatching { call.receiveNullable<AddressRequest>() }.getOrNull() ?: kotlin.run {
@@ -60,14 +64,15 @@ fun Route.addressRoutes(){
             else { call.respond(HttpStatusCode.InternalServerError, "An error occurred") }
         }
 
-        // Update address
+        // Update address [PUT]
+        // http://localhost:8080/api/v1/addresses/{id}
         put("/{id}"){
-            if(!isAdmin()) return@put
             val id = call.parameters["id"] ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest, "Invalid id")
                 return@put
             }
             ObjectId.isValid(id)
+            if(!isAdmin()) return@put
 
             val address = addressDataSource.getAddressById(id)
             if(address == null){
@@ -89,13 +94,14 @@ fun Route.addressRoutes(){
             }
         }
 
-        // Delete address
+        // Delete address [DELETE]
+        // http://localhost:8080/api/v1/addresses/{id}
         delete("/{id}"){
-            if(!isAdmin()) return@delete
             val id = call.parameters["id"] ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest, "Invalid id")
                 return@delete
             }
+            if(!isAdmin()) return@delete
             ObjectId.isValid(id)
 
             val address = addressDataSource.getAddressById(id)
