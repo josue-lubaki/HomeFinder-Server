@@ -1,1 +1,1 @@
-web: ./build/install/HomeFinder-shadow/bin/HomeFinder
+web: build/install/HomeFinder/bin/HomeFinder
