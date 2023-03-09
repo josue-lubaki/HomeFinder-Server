@@ -52,6 +52,8 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:$koinKtor")
     implementation("io.insert-koin:koin-logger-slf4j:$koinKtor")
 
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+
     // MongoDB
     implementation("org.litote.kmongo:kmongo:$kMongoVersion")
     implementation("org.litote.kmongo:kmongo-coroutine:$kMongoVersion")
