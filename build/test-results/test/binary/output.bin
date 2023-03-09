@@ -1,0 +1,4 @@
+‰2023-03-05 18:56:32.018 [Test worker @coroutine#1] TRACE io.ktor.client.plugins.HttpPlainText - Adding Accept-Charset=UTF-8 to http:///
+¥2023-03-05 18:56:32.215 [DefaultDispatcher-worker-1 @call-context#2] INFO  ktor.test - No ktor.deployment.watch patterns specified, automatic reload is not active.
+É2023-03-05 18:56:33.129 [DefaultDispatcher-worker-1 @call-context#2] INFO  org.mongodb.driver.cluster - Cluster created with settings {hosts=[127.0.0.1:27017], srvHost=cluster1.ebbpcnk.mongodb.net, mode=MULTIPLE, requiredClusterType=REPLICA_SET, serverSelectionTimeout='30000 ms', requiredReplicaSetName='atlas-7vv86x-shard-0'}
+º2023-03-05 18:56:33.156 [Test worker @coroutine#1] TRACE i.k.client.plugins.HttpCallValidator - Processing exception java.lang.ExceptionInInitializerError for request http://localhost/
