@@ -32,5 +32,9 @@ out/
 /nbdist/
 /.nb-gradle/
 
+/build/*
+!/build/install/
+/build/install/HomeFinder/*
+!/build/install/HomeFinder/bin/
 ### VS Code ###
 .vscode/
