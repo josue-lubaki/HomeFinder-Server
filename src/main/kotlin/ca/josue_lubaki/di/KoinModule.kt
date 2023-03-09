@@ -24,12 +24,9 @@ import org.litote.kmongo.reactivestreams.KMongo
  * @since 2023-03-04
  */
 val KoinModule = module {
-    val mongoDBUsername= System.getenv("MONGODB_USERNAME")
-    val mongoDBPassword = System.getenv("MONGODB_PASSWORD")
-    val dbName = System.getenv("MONGODB_DB_NAME")
-    val db = KMongo.createClient(
-        "mongodb+srv://$mongoDBUsername:$mongoDBPassword@cluster1.ebbpcnk.mongodb.net/$dbName?retryWrites=true&w=majority"
-    ).coroutine.getDatabase(dbName)
+    val dbName = System.getenv("MONGODB_DB_NAME") ?: "HomeFinderDB"
+    val mongoDBUrl = System.getenv("MONGODB_URL") ?: "mongodb://localhost:27017"
+    val db = KMongo.createClient(mongoDBUrl).coroutine.getDatabase(dbName)
 
     single { db }
     single<UserDataSource> {
@@ -52,10 +49,10 @@ val KoinModule = module {
     single<TokenService> { JwtToken() }
     single {
         TokenConfig(
-            secret = System.getenv("JWT_SECRET"),
-            issuer = System.getenv("JWT_ISSUER"),
-            audience = System.getenv("JWT_AUDIENCE"),
-            expiresIn = 1000L * 60L * System.getenv("JWT_EXPIRATION_TIME").toLong(),
+            secret = System.getenv("JWT_SECRET") ?: "secret",
+            issuer = System.getenv("JWT_ISSUER") ?: "HomeFinder",
+            audience = System.getenv("JWT_AUDIENCE") ?: "HomeFinder",
+            expiresIn = 1000L * 60L * (System.getenv("JWT_EXPIRATION_TIME") ?: "30").toLong(),
             role = Role.USER
         )
     }
