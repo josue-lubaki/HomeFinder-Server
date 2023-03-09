@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - Class ca.josue_lubaki.ApplicationTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class ca.josue_lubaki.ApplicationTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/ca.josue_lubaki.html">ca.josue_lubaki</a> &gt; ApplicationTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">2.024s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">access root endpoint, assert correct information</td>
+<td class="success">2.024s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>2023-03-09 00:29:12.855 [Test worker @coroutine#1] TRACE io.ktor.client.plugins.HttpPlainText - Adding Accept-Charset=UTF-8 to http:///
+2023-03-09 00:29:13.105 [DefaultDispatcher-worker-1 @call-context#2] INFO  ktor.test - No ktor.deployment.watch patterns specified, automatic reload is not active.
+2023-03-09 00:29:14.135 [DefaultDispatcher-worker-1 @call-context#2] DEBUG org.mongodb.driver.cluster - Updating cluster description to  {type=UNKNOWN, servers=[{address=localhost:27017, type=UNKNOWN, state=CONNECTING}]
+2023-03-09 00:29:14.186 [DefaultDispatcher-worker-1 @call-context#2] INFO  org.mongodb.driver.client - MongoClient with metadata {&quot;driver&quot;: {&quot;name&quot;: &quot;mongo-java-driver|reactive-streams|kmongo&quot;, &quot;version&quot;: &quot;4.8.0&quot;}, &quot;os&quot;: {&quot;type&quot;: &quot;Windows&quot;, &quot;name&quot;: &quot;Windows 11&quot;, &quot;architecture&quot;: &quot;amd64&quot;, &quot;version&quot;: &quot;10.0&quot;}, &quot;platform&quot;: &quot;Java/Amazon.com Inc./11.0.15+9-LTS|Kotlin/1.8.10&quot;} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, streamFactoryFactory=null, commandListeners=[], codecRegistry=ProvidersCodecRegistry{codecProviders=[ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, EnumCodecProvider{}, com.mongodb.Jep395RecordCodecProvider@1c2357f]}, org.litote.kmongo.service.CustomCodecProvider@33f9ba49, ProvidersCodecRegistry{codecProviders=[org.litote.kmongo.jackson.JacksonCodecProvider@1c72b84c]}]}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='30000 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, sendBufferSize=0}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, sendBufferSize=0}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, contextProvider=null}
+2023-03-09 00:29:14.201 [cluster-rtt-ClusterId{value='64096eaa8ca8b0561bc74698', description='null'}-localhost:27017] DEBUG org.mongodb.driver.connection - Opened connection [connectionId{localValue:2, serverValue:10}] to localhost:27017
+2023-03-09 00:29:14.201 [cluster-ClusterId{value='64096eaa8ca8b0561bc74698', description='null'}-localhost:27017] DEBUG org.mongodb.driver.connection - Opened connection [connectionId{localValue:1, serverValue:9}] to localhost:27017
+2023-03-09 00:29:14.202 [cluster-ClusterId{value='64096eaa8ca8b0561bc74698', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=13, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=32619000}
+2023-03-09 00:29:14.202 [DefaultDispatcher-worker-1 @call-context#2] INFO  [Koin] - loaded 8 definitions in 1.5003 ms
+2023-03-09 00:29:14.205 [cluster-ClusterId{value='64096eaa8ca8b0561bc74698', description='null'}-localhost:27017] DEBUG org.mongodb.driver.connection - Marking the connection pool for ServerId{clusterId=ClusterId{value='64096eaa8ca8b0561bc74698', description='null'}, address=localhost:27017} as 'ready'
+2023-03-09 00:29:14.205 [MaintenanceTimer-2-thread-1] DEBUG org.mongodb.driver.connection - Pruning pooled connections to localhost:27017
+2023-03-09 00:29:14.207 [cluster-ClusterId{value='64096eaa8ca8b0561bc74698', description='null'}-localhost:27017] DEBUG org.mongodb.driver.cluster - Updating cluster description to  {type=STANDALONE, servers=[{address=localhost:27017, type=STANDALONE, roundTripTime=32.6 ms, state=CONNECTED}]
+2023-03-09 00:29:14.207 [cluster-ClusterId{value='64096eaa8ca8b0561bc74698', description='null'}-localhost:27017] DEBUG org.mongodb.driver.cluster - Checking status of localhost:27017
+2023-03-09 00:29:14.270 [DefaultDispatcher-worker-1 @call-context#2] INFO  ktor.test - Application started in 1.19 seconds.
+2023-03-09 00:29:14.271 [DefaultDispatcher-worker-1 @call-context#2] DEBUG ktor.test - Application started: io.ktor.server.application.Application@1bfef008
+2023-03-09 00:29:14.329 [DefaultDispatcher-worker-1 @request#2] TRACE io.ktor.routing.Routing - Trace for []
+/, segment:0 -&gt; SUCCESS @ /
+  /, segment:0 -&gt; SUCCESS @ /
+    /(method:GET), segment:0 -&gt; SUCCESS @ /(method:GET)
+    /auth, segment:0 -&gt; FAILURE &quot;Selector didn't match&quot; @ /auth
+    /api, segment:0 -&gt; FAILURE &quot;Selector didn't match&quot; @ /api
+Matched routes:
+  &quot;&quot; -&gt; &quot;&lt;slash&gt;&quot; -&gt; &quot;(method:GET)&quot;
+Route resolve result:
+  SUCCESS @ /(method:GET)
+2023-03-09 00:29:14.336 [DefaultDispatcher-worker-1 @request#2] TRACE i.k.s.p.c.ContentNegotiation - Skipping because body is already converted.
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 7.5.1</a> at Mar. 9, 2023, 12:29:14 a.m.</p>
+</div>
+</div>
+</body>
+</html>

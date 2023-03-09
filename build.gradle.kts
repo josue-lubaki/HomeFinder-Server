@@ -24,6 +24,10 @@ repositories {
     mavenCentral()
 }
 
+tasks.create("stage") {
+    dependsOn("installDist")
+}
+
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
@@ -48,8 +52,15 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:$koinKtor")
     implementation("io.insert-koin:koin-logger-slf4j:$koinKtor")
 
+    // https://mvnrepository.com/artifact/io.ktor/ktor-server-core
+    runtimeOnly("io.ktor:ktor-server-core:2.2.4")
+
+
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+
     // MongoDB
     implementation("org.litote.kmongo:kmongo:$kMongoVersion")
+    implementation("org.litote.kmongo:kmongo-async:$kMongoVersion")
     implementation("org.litote.kmongo:kmongo-coroutine:$kMongoVersion")
 
     implementation("commons-codec:commons-codec:$commonsCodecVersion")
