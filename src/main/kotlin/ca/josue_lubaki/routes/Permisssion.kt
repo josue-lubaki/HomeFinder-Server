@@ -6,7 +6,6 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
-import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
 
 /**
@@ -22,5 +21,14 @@ suspend fun PipelineContext<Unit, ApplicationCall>.isAdmin(): Boolean {
     if (role == Role.ADMIN.name) { return true }
 
     call.respond(HttpStatusCode.Forbidden, "You are not allowed to access this resource, only admins can do that")
+    return false
+}
+
+suspend fun PipelineContext<Unit, ApplicationCall>.isAuthenticated(): Boolean {
+    val principal = call.authentication.principal<JWTPrincipal>()
+
+    if (principal != null) { return true }
+
+    call.respond(HttpStatusCode.Forbidden, "You are not allowed to access this resource, you need to be authenticated")
     return false
 }

@@ -1,6 +1,9 @@
 package ca.josue_lubaki.data.models
 
+import ca.josue_lubaki.data.response.address.AddressResponse
+import ca.josue_lubaki.data.response.house.HouseDto
 import ca.josue_lubaki.data.response.house.HouseResponse
+import ca.josue_lubaki.data.response.owner.OwnerResponse
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 
@@ -37,4 +40,36 @@ data class House (
         pool = pool,
         owner = owner
     )
+
+    fun toDto() : HouseDto {
+        return HouseDto(
+            id = id.toString(),
+            description = description,
+            images = images,
+            price = price,
+            address = AddressResponse(
+                id = address,
+                number = "",
+                street = "",
+                city = "",
+                province = "",
+                postalCode = "",
+                country = ""
+            ),
+            bedrooms = bedrooms,
+            bathrooms = bathrooms,
+            area = area,
+            type = type.name,
+            yearBuilt = yearBuilt,
+            pool = pool,
+            owner = OwnerResponse(
+                id = owner,
+                username = "",
+                firstName = "",
+                lastName = "",
+                email = "",
+                phone = "",
+            )
+        )
+    }
 }

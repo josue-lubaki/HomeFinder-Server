@@ -27,14 +27,9 @@ fun Application.configureRouting() {
                 this.authenticate {
                     getSecretInfo()
                     authenticate()
-
-                    // Admin Routes
-                    // http://localhost:8080/api/v1/admin/
-                    route("admin") {
-                        housesRoutes()
-                        ownerRoutes()
-                        addressRoutes()
-                    }
+                    housesRoutes()
+                    ownerRoutes()
+                    addressRoutes()
                 }
             }
         }

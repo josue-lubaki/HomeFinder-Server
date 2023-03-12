@@ -23,4 +23,21 @@ data class HouseDto (
     val yearBuilt: Int,
     val pool: Boolean,
     val owner: OwnerResponse
-)
+) {
+    fun toResponse(): HouseResponse {
+        return HouseResponse(
+            id = id,
+            description = description,
+            images = images,
+            price = price,
+            address = address.id,
+            bedrooms = bedrooms,
+            bathrooms = bathrooms,
+            area = area,
+            type = type,
+            yearBuilt = yearBuilt,
+            pool = pool,
+            owner = owner.id
+        )
+    }
+}

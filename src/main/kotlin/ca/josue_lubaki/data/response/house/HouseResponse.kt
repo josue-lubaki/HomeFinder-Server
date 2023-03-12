@@ -2,6 +2,8 @@ package ca.josue_lubaki.data.response.house
 
 import ca.josue_lubaki.data.models.House
 import ca.josue_lubaki.data.models.HouseType
+import ca.josue_lubaki.data.response.address.AddressResponse
+import ca.josue_lubaki.data.response.owner.OwnerResponse
 import kotlinx.serialization.Serializable
 
 /**
@@ -37,6 +39,38 @@ data class HouseResponse (
             yearBuilt = yearBuilt,
             pool = pool,
             owner = owner
+        )
+    }
+
+    fun toDto() : HouseDto {
+        return HouseDto(
+            id = id,
+            description = description,
+            images = images,
+            price = price,
+            address = AddressResponse(
+                id = address,
+                number = "",
+                street = "",
+                city = "",
+                province = "",
+                postalCode = "",
+                country = ""
+            ),
+            bedrooms = bedrooms,
+            bathrooms = bathrooms,
+            area = area,
+            type = type,
+            yearBuilt = yearBuilt,
+            pool = pool,
+            owner = OwnerResponse(
+                id = owner,
+                username = "",
+                firstName = "",
+                lastName = "",
+                email = "",
+                phone = "",
+            )
         )
     }
 }

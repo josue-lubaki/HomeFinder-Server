@@ -14,6 +14,7 @@ import ca.josue_lubaki.security.hashing.SHA265HashingServiceImpl
 import ca.josue_lubaki.security.token.JwtToken
 import ca.josue_lubaki.security.token.TokenConfig
 import ca.josue_lubaki.security.token.TokenService
+import io.ktor.server.application.*
 import org.koin.dsl.module
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
@@ -24,11 +25,13 @@ import org.litote.kmongo.reactivestreams.KMongo
  * @since 2023-03-04
  */
 val KoinModule = module {
-    val dbName = System.getenv("MONGODB_DB_NAME") ?: "HomeFinderDB"
-    val mongoDBUrl = System.getenv("MONGODB_URL") ?: "mongodb://localhost:27017"
-    val db = KMongo.createClient(mongoDBUrl).coroutine.getDatabase(dbName)
 
-    single { db }
+    single {
+        val dbName = System.getenv("MONGODB_DB_NAME")
+        val mongoDBUrl = System.getenv("MONGODB_URL")
+        val db = KMongo.createClient(mongoDBUrl).coroutine.getDatabase(dbName)
+        db
+    }
     single<UserDataSource> {
         UserDataSourceImpl(get())
     }
@@ -48,11 +51,15 @@ val KoinModule = module {
     // Token & Hashing Providers
     single<TokenService> { JwtToken() }
     single {
+        val secret = System.getenv("JWT_SECRET") ?: ""
+        val issuer = System.getenv("JWT_ISSUER") ?: ""
+        val audience = System.getenv("JWT_AUDIENCE") ?: ""
+        val expiresIn = System.getenv("JWT_EXPIRATION_TIME") ?: "30"
         TokenConfig(
-            secret = System.getenv("JWT_SECRET") ?: "secret",
-            issuer = System.getenv("JWT_ISSUER") ?: "HomeFinder",
-            audience = System.getenv("JWT_AUDIENCE") ?: "HomeFinder",
-            expiresIn = 1000L * 60L * (System.getenv("JWT_EXPIRATION_TIME") ?: "30").toLong(),
+            secret = secret,
+            issuer = issuer,
+            audience = audience,
+            expiresIn = 1000L * 60L * expiresIn.toLong(),
             role = Role.USER
         )
     }
