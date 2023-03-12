@@ -29,7 +29,6 @@ fun Route.addressRoutes(){
         // Get all addresses [GET]
         // http://localhost:8080/api/v1/addresses
         get {
-            if(!isAdmin()) return@get
             val addresses = addressDataSource.getAllAddresses()
             call.respond(addresses)
         }
@@ -37,7 +36,6 @@ fun Route.addressRoutes(){
         // Get address by id [GET]
         // http://localhost:8080/api/v1/addresses/{id}
         get("/{id}"){
-            if(!isAdmin()) return@get
             val id = call.parameters["id"] ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest, "Invalid id")
                 return@get
@@ -114,20 +112,21 @@ fun Route.addressRoutes(){
                 return@delete
             }
 
-            val house = houseDataSource.getHouseByAddressId(id) ?: run {
+            val house = houseDataSource.getHouseByAddressId(id).data[0] ?: run {
                 call.respond(HttpStatusCode.InternalServerError, "An error occurred")
                 return@delete
             }
-            val owner = ownerDataSource.getOwnerById(house.owner) ?: run {
+
+            val owner = ownerDataSource.getOwnerById(house.owner.id) ?: run {
                 call.respond(HttpStatusCode.InternalServerError, "An error occurred")
                 return@delete
             }
 
             kotlin.runCatching {
-                val houseDeleted = houseDataSource.deleteHouse(house.id) ?: false
+                val houseDeleted = houseDataSource.deleteHouse(house.id)
                 val ownerDeleted = ownerDataSource.deleteOwner(owner.id)
 
-                if(!houseDeleted || !ownerDeleted) {
+                if(!houseDeleted.success || !ownerDeleted) {
                     call.respond(HttpStatusCode.InternalServerError, "An error occurred")
                     return@delete
                 }

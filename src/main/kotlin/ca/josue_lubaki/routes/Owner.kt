@@ -46,7 +46,6 @@ fun Route.ownerRoutes() {
         // Get all owners [GET]
         // http://localhost:8080/api/v1/owners
         get {
-            if (!isAdmin()) return@get
             val owners = ownerDataSource.getAllOwners()
             call.respond(owners)
         }
@@ -54,7 +53,6 @@ fun Route.ownerRoutes() {
         // Get a specific owner [GET]
         // http://localhost:8080/api/v1/owners/{id}
         get("/{id}"){
-            if (!isAdmin()) return@get
             val id = call.parameters["id"] ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest, "Invalid id")
                 return@get

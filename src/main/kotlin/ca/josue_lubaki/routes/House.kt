@@ -4,10 +4,10 @@ import ca.josue_lubaki.data.datasource.AddressDataSource
 import ca.josue_lubaki.data.datasource.HouseDataSource
 import ca.josue_lubaki.data.datasource.OwnerDataSource
 import ca.josue_lubaki.data.models.Address
-import ca.josue_lubaki.data.models.HouseType
 import ca.josue_lubaki.data.models.Owner
 import ca.josue_lubaki.data.request.house.HouseRequest
 import ca.josue_lubaki.data.response.address.AddressResponse
+import ca.josue_lubaki.data.response.house.ApiResponse
 import ca.josue_lubaki.data.response.house.HouseDto
 import ca.josue_lubaki.data.response.house.HouseResponse
 import ca.josue_lubaki.data.response.owner.OwnerResponse
@@ -45,8 +45,8 @@ fun Route.housesRoutes() {
             val address = addressDataSource.getAddressByStreetAndNumber(request.street, request.number)
 
             if (owner != null && address != null){
-                val house = houseDataSource.getHouseByOwnerAndAddress(owner.id, address.id)
-                if (house != null){
+                val apiResponse = houseDataSource.getHouseByOwnerAndAddress(owner.id, address.id)
+                if (apiResponse.data.isNotEmpty()){
                     call.respond(HttpStatusCode.Conflict, "This house already exists")
                     return@post
                 }
@@ -83,37 +83,36 @@ fun Route.housesRoutes() {
             val houseToInsert = request.toHouse(addressInserted, ownerInserted)
             val newHouse = houseDataSource.insertHouse(houseToInsert)
 
-            if (newHouse){
-                call.respond(HttpStatusCode.Created, "House created")
-            } else {
-                call.respond(HttpStatusCode.InternalServerError, "An error occurred")
-            }
+            call.respond(status = HttpStatusCode.OK, message = newHouse)
         }
 
         // get All houses [GET]
         // http://localhost:8080/api/v1/houses
         get {
-            if (!isAdmin()) return@get
 
-            val houses = houseDataSource.getAllHouses()
-            if (houses.isEmpty()){
-                call.respond(HttpStatusCode.NoContent, "No houses found")
-                return@get
-            }
+            val page = call.request.queryParameters["page"]?.toInt() ?: 1
+            val limit = call.request.queryParameters["limit"]?.toInt() ?: 5
+
+            val apiResponse = houseDataSource.getAllHouses(page, limit)
 
             val houseResponse = mutableListOf<HouseDto>()
-            houses.forEach {
-                val owner = ownerDataSource.getOwnerById(it.owner)
-                val address = addressDataSource.getAddressById(it.address)
-                houseResponse.add(houseDto(it, address, owner))
+            apiResponse.data.forEach {
+                if (it == null) return@forEach
+                val owner = ownerDataSource.getOwnerById(it.owner.id)
+                val address = addressDataSource.getAddressById(it.address.id)
+                houseResponse.add(houseDto(it.toResponse(), address, owner))
             }
 
-            if(houseResponse.isEmpty()){
-                call.respond(HttpStatusCode.OK, houseResponse)
-                return@get
-            }
+            val response = ApiResponse(
+                success = true,
+                message = HttpStatusCode.OK.description,
+                prevPage = apiResponse.prevPage,
+                nextPage = apiResponse.nextPage,
+                data = houseResponse.toList(),
+                lastUpdated = apiResponse.lastUpdated
+            )
 
-            call.respond(HttpStatusCode.OK, houseResponse)
+            call.respond(HttpStatusCode.OK, response)
         }
 
         // get houses by type [GET]
@@ -124,19 +123,26 @@ fun Route.housesRoutes() {
                 return@get
             }
             ObjectId.isValid(id)
-            if (!isAdmin()) return@get
 
-            val house = houseDataSource.getHouseById(id)
+            val apiResponse = houseDataSource.getHouseById(id)
 
-            if (house == null) {
+            val first = apiResponse.data[0] ?: kotlin.run {
                 call.respond(HttpStatusCode.NotFound, "House not found")
                 return@get
             }
 
-            val owner = ownerDataSource.getOwnerById(house.owner)
-            val address = addressDataSource.getAddressById(house.address)
-            val houseResponse = houseDto(house, address, owner)
-            call.respond(HttpStatusCode.OK, houseResponse)
+            val owner = ownerDataSource.getOwnerById(first.owner.id)
+            val address = addressDataSource.getAddressById(first.address.id)
+            val houseResponse = houseDto(first.toResponse(), address, owner)
+
+            val response  = ApiResponse(
+                success = true,
+                message = HttpStatusCode.OK.description,
+                data = listOf(houseResponse),
+                lastUpdated = apiResponse.lastUpdated
+            )
+
+            call.respond(HttpStatusCode.OK, response)
         }
 
 
@@ -151,8 +157,8 @@ fun Route.housesRoutes() {
             if (!isAdmin()) return@put
             ObjectId.isValid(id)
 
-            val house = houseDataSource.getHouseById(id)
-            if (house == null){
+            val apiResponse = houseDataSource.getHouseById(id)
+            val first = apiResponse.data[0]?: kotlin.run {
                 call.respond(HttpStatusCode.NotFound, "House not found")
                 return@put
             }
@@ -163,8 +169,8 @@ fun Route.housesRoutes() {
             }
 
             kotlin.runCatching {
-                val owner = ownerDataSource.getOwnerById(house.owner)!!.copy(
-                    id = house.owner,
+                val owner = ownerDataSource.getOwnerById(first.owner.id)!!.copy(
+                    id = first.owner.id,
                     username = request.ownerUsername,
                     firstName = request.ownerFirstName,
                     lastName = request.ownerLastName,
@@ -172,8 +178,8 @@ fun Route.housesRoutes() {
                     phone = request.ownerPhone
                 )
 
-                val address = addressDataSource.getAddressById(house.address)!!.copy(
-                    id = house.address,
+                val address = addressDataSource.getAddressById(first.address.id)!!.copy(
+                    id = first.address.id,
                     number = request.number,
                     street = request.street,
                     city = request.city,
@@ -184,7 +190,7 @@ fun Route.housesRoutes() {
 
                 val addressToUpdate = address.toDomain().copy(id = ObjectId(address.id))
                 val updatedAddress = addressDataSource.updateAddress(addressToUpdate)
-                val updatedOwner = ownerDataSource.updateOwner(owner.toDomain().copy(id = ObjectId(house.owner)))
+                val updatedOwner = ownerDataSource.updateOwner(owner.toDomain().copy(id = ObjectId(first.owner.id)))
 
                 if(!updatedAddress || !updatedOwner){
                     call.respond(HttpStatusCode.InternalServerError, "An error occurred")
@@ -195,25 +201,42 @@ fun Route.housesRoutes() {
                 return@put
             }
 
-            val updatedToHouse = houseDataSource.getHouseById(id)!!.copy(
-                id = id,
-                owner = house.owner,
-                address = house.address,
-                price = request.price,
-                description = request.description,
-                type = HouseType.valueOf(request.type).name,
-                bedrooms = request.bedrooms,
-                bathrooms = request.bathrooms,
-                area = request.area,
-                pool = request.pool,
-                yearBuilt = request.yearBuilt,
-                images = request.images
+            val apiResponseUpdated = houseDataSource.getHouseById(id).copy(
+                data = listOf(first.copy(
+                    id = first.id,
+                    price = request.price,
+                    bathrooms = request.bathrooms,
+                    bedrooms = request.bedrooms,
+                    description = request.description,
+                    area = request.area,
+                    type = request.type,
+                    yearBuilt = request.yearBuilt,
+                    pool = request.pool,
+                    images = request.images,
+                    owner = first.owner.copy(
+                        id = first.owner.id,
+                        username = request.ownerUsername,
+                        firstName = request.ownerFirstName,
+                        lastName = request.ownerLastName,
+                        email = request.ownerEmail,
+                        phone = request.ownerPhone
+                    ),
+                    address = first.address.copy(
+                        id = first.address.id,
+                        street = request.street,
+                        number = request.number,
+                        city = request.city,
+                        province = request.province,
+                        country = request.country,
+                        postalCode = request.postalCode
+                    )
+                ))
             )
 
-            val houseToUpdate = updatedToHouse.toDomain().copy(id = ObjectId(id))
-            val updatedHouse = houseDataSource.updateHouse(houseToUpdate)
-            if(updatedHouse){
-                call.respond(HttpStatusCode.OK, "House updated")
+            val houseToUpdate = apiResponseUpdated.data[0]?.toResponse()!!
+            val updatedHouse = houseDataSource.updateHouse(houseToUpdate.toDomain().copy(id = ObjectId(first.id)))
+            if(updatedHouse.success){
+                call.respond(HttpStatusCode.OK, updatedHouse)
             } else {
                 call.respond(HttpStatusCode.InternalServerError, "An error occurred")
             }
@@ -222,28 +245,44 @@ fun Route.housesRoutes() {
         // Delete a house
         delete("/{id}"){
             if (!isAdmin()) return@delete
-            val id = call.parameters["id"]?: kotlin.run {
-                call.respond(HttpStatusCode.BadRequest, "Invalid id")
+
+            val responseBadRequest = ApiResponse(
+                success = false,
+                message = "Invalid id"
+            )
+
+            val id = call.parameters["id"] ?: kotlin.run {
+                call.respond(HttpStatusCode.BadRequest, responseBadRequest)
                 return@delete
             }
-            ObjectId.isValid(id)
 
-            val houseToDelete = houseDataSource.getHouseById(id) ?: kotlin.run {
-                call.respond(HttpStatusCode.NotFound, "House not found")
+            if(!ObjectId.isValid(id)){
+                call.respond(HttpStatusCode.BadRequest, responseBadRequest)
                 return@delete
             }
 
-            val deleted = kotlin.runCatching {
-                ownerDataSource.deleteOwner(houseToDelete.owner) // delete owner
-                addressDataSource.deleteAddress(houseToDelete.address) // delete address
+            val houseToDelete = houseDataSource.getHouseById(id).data[0] ?: kotlin.run {
+                call.respond(HttpStatusCode.NoContent)
+                return@delete
+            }
+
+            val apiResponse = kotlin.runCatching {
+                ownerDataSource.deleteOwner(houseToDelete.owner.id) // delete owner
+                addressDataSource.deleteAddress(houseToDelete.address.id) // delete address
                 houseDataSource.deleteHouse(id) // delete house
             }.getOrNull() ?: kotlin.run {
                 call.respond(HttpStatusCode.InternalServerError, "An error occurred")
                 return@delete
             }
 
-            if (deleted) { call.respond(HttpStatusCode.OK, "House deleted") }
-            else { call.respond(HttpStatusCode.NotFound, "House not found") }
+            if (apiResponse.success) { call.respond(HttpStatusCode.NoContent, apiResponse) }
+            else {
+                val response = ApiResponse(
+                    success = false,
+                    message = "An error occurred while deleting the house"
+                )
+                call.respond(HttpStatusCode.NotFound, response)
+            }
         }
     }
 }

@@ -28,7 +28,6 @@ fun Application.configureSecurity() {
                     .require(Algorithm.HMAC256(config.secret))
                     .withAudience(config.audience)
                     .withIssuer(config.issuer)
-//                    .withClaim("role", Role.USER.name)
                     .build()
             )
 
