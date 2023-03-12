@@ -1,5 +1,5 @@
 # HomeFinder-Server
-Bienvenue dans le README de HomeFinder-Server, l'application de serveur qui fournit une API pour permettre à des utilisateurs de chercher des maisons disponibles pour la location ou l'achat. Cette application est conçue pour être utilisée en tandem avec HomeFinder, une application mobile.
+Bienvenue dans HomeFinder-Server, application serveur qui fournit une API pour permettre à des utilisateurs de chercher des maisons disponibles pour l'achat. Cette application est conçue pour être utilisée en tandem avec HomeFinder, une application mobile.
 
 Endpoints
 Les endpoints sont les URLs que vous pouvez appeler pour interagir avec l'API. Voici les endpoints disponibles dans HomeFinder-Server:
