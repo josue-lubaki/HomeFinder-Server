@@ -1,10 +1,10 @@
 # HomeFinder-Server
 Bienvenue dans HomeFinder-Server, application serveur qui fournit une API pour permettre à des utilisateurs de chercher des maisons disponibles pour l'achat. Cette application est conçue pour être utilisée en tandem avec HomeFinder, une application mobile.
 
-Endpoints
+# Endpoints
 Les endpoints sont les URLs que vous pouvez appeler pour interagir avec l'API. Voici les endpoints disponibles dans HomeFinder-Server:
 
-## Register [POST]
+### Register [POST]
 ```shell
 https://homefinder-ktor-server.herokuapp.com/auth/register
 ```
@@ -19,26 +19,26 @@ Cet endpoint permet à un utilisateur de créer son compte en fournissant des in
 }
 ```
 
-## Login [POST]
+### Login [POST]
 ```shell 
 https://homefinder-ktor-server.herokuapp.com/auth/login
 ```
 Cet endpoint permet à un utilisateur de se connecter en fournissant leur adresse email et leur mot de passe. Si les informations d'identification sont correctes, un jeton d'accès est renvoyé en tant qu'objet JSON avec le champ token.
-### Exemple Requête :
+#### Exemple Requête :
 ```json
 {
     "username" : "john_doe",
     "password" : "JohnDoe"
 }
 ```
-### Exemple Resultat :
+#### Exemple Resultat :
 ```json 
 {
     "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJIb21lRmluZGVyQXVkaWVuY2UiLCJyb2xlIjoiVVNFUiIsImlzcyI6Imh0dHA6Ly8wLjAuMC4wOjgwODAiLCJleHAiOjE2Nzg2MTIxNjEsInVzZXJJZCI6IjY0MDQ2OThjNWVlNzc5MDI1Njg3NjMwZCJ9.y7iUfkLgldDAl3sYHwpSqmUn2RNsNQIVFmtSx-bguhk"
 }
 ```
 
-## Houses [GET]
+### Houses [GET]
 ```shell 
 https://homefinder-ktor-server.herokuapp.com/api/v1/houses
 ```
