@@ -18,6 +18,7 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.pipeline.*
 import org.koin.ktor.ext.inject
 
 /**
@@ -31,43 +32,51 @@ fun Route.register() {
     val userDataSource : UserDataSource by inject()
 
     post("register") {
-        val request = kotlin.runCatching { call.receiveNullable<RegisterRequest>() }.getOrNull() ?: kotlin.run {
-            call.respond(HttpStatusCode.BadRequest,"Invalid request")
-            return@post
-        }
-
-        val areFieldsBlank = Utils.requestRegisterValidator(request)
-        val isPasswordTooShort = request.password.length < 8
-
-        if(areFieldsBlank || isPasswordTooShort) {
-            call.respond(HttpStatusCode.Conflict)
-            return@post
-        }
-
-        val userExists = userDataSource.getUserByUsername(request.username)
-        if(userExists != null) {
-            call.respond(HttpStatusCode.Conflict,"User already exists")
-            return@post
-        }
-
-        val saltedHash = hashingService.generateSaltedHash(request.password)
-        val user = User (
-            username = request.username,
-            password = saltedHash.hash,
-            salt = saltedHash.salt,
-            email = request.email,
-            firstName = request.firstName,
-            lastName = request.lastName
-        )
-
-        val wasAcknowledged = userDataSource.insertUser(user)
-        if(!wasAcknowledged) {
-            call.respond(HttpStatusCode.Conflict)
-            return@post
-        }
-
-        call.respond(HttpStatusCode.Created)
+        registerUser(userDataSource, hashingService)
     }
+}
+
+suspend fun PipelineContext<Unit, ApplicationCall>.registerUser(
+    userDataSource: UserDataSource,
+    hashingService: HashingService
+) {
+    val request = kotlin.runCatching { call.receiveNullable<RegisterRequest>() }.getOrNull() ?: kotlin.run {
+        call.respond(HttpStatusCode.BadRequest, "Invalid request")
+        return@registerUser
+    }
+
+    val areFieldsBlank = Utils.requestRegisterValidator(request)
+    val isPasswordTooShort = request.password.length < 8
+
+    if (areFieldsBlank || isPasswordTooShort) {
+        call.respond(HttpStatusCode.Conflict)
+        return
+    }
+
+    val userExistsApiResponse = userDataSource.getUserByUsername(request.username)
+    val userExists = userExistsApiResponse.data.first()
+    if (userExists != null) {
+        call.respond(HttpStatusCode.Conflict, "User already exists")
+        return
+    }
+
+    val saltedHash = hashingService.generateSaltedHash(request.password)
+    val user = User(
+        username = request.username,
+        password = saltedHash.hash,
+        salt = saltedHash.salt,
+        email = request.email,
+        firstName = request.firstName,
+        lastName = request.lastName
+    )
+
+    val apiResponse = userDataSource.insertUser(user)
+    if (!apiResponse.success) {
+        call.respond(HttpStatusCode.Conflict)
+        return
+    }
+
+    call.respond(HttpStatusCode.Created)
 }
 
 fun Route.login() {
@@ -84,7 +93,8 @@ fun Route.login() {
             return@post
         }
 
-        val user = userDataSource.getUserByUsername(request.username)
+        val userApiResponse = userDataSource.getUserByUsername(request.username)
+        val user = userApiResponse.data.first()
         if(user == null) {
             call.respond(HttpStatusCode.NotFound)
             return@post
@@ -107,11 +117,11 @@ fun Route.login() {
             claims = arrayOf (
                 TokenClaim (
                     name = "userId",
-                    value = user.id.toString()
+                    value = user.id
                 ),
                 TokenClaim (
                     name = "role",
-                    value = user.role.name
+                    value = user.role
                 )
             )
         )

@@ -112,23 +112,13 @@ fun Route.addressRoutes(){
                 return@delete
             }
 
-            val house = houseDataSource.getHouseByAddressId(id).data[0] ?: run {
-                call.respond(HttpStatusCode.InternalServerError, "An error occurred")
-                return@delete
-            }
-
-            val owner = ownerDataSource.getOwnerById(house.owner.id) ?: run {
-                call.respond(HttpStatusCode.InternalServerError, "An error occurred")
-                return@delete
-            }
+            val houses = houseDataSource.getAllHousesByAddressId(id).data
+            val owners = houses.map { owner -> ownerDataSource.getOwnerById(owner!!.owner.id) }
 
             kotlin.runCatching {
-                val houseDeleted = houseDataSource.deleteHouse(house.id)
-                val ownerDeleted = ownerDataSource.deleteOwner(owner.id)
-
-                if(!houseDeleted.success || !ownerDeleted) {
-                    call.respond(HttpStatusCode.InternalServerError, "An error occurred")
-                    return@delete
+                owners.forEach{ owner -> ownerDataSource.deleteOwner(owner.data.first()!!.id) }
+                houses.forEach { house ->
+                    houseDataSource.deleteHouse(house?.id!!)
                 }
             }.getOrNull() ?: kotlin.run {
                 call.respond(HttpStatusCode.InternalServerError, "An error occurred")

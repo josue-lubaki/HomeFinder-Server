@@ -18,17 +18,53 @@ suspend fun PipelineContext<Unit, ApplicationCall>.isAdmin(): Boolean {
     val principal = call.authentication.principal<JWTPrincipal>()
     val role = principal?.payload?.getClaim("role")?.asString()
 
-    if (role == Role.ADMIN.name) { return true }
+    return if (role == Role.ADMIN.name) {
+        true
+    } else {
+        call.respond(HttpStatusCode.Forbidden, "You are not allowed to access this resource, only admins can do that")
+        false
+    }
+}
 
-    call.respond(HttpStatusCode.Forbidden, "You are not allowed to access this resource, only admins can do that")
-    return false
+suspend fun PipelineContext<Unit, ApplicationCall>.hasOwnerOrAdmin(): Boolean {
+    val principal = call.authentication.principal<JWTPrincipal>()
+    val role = principal?.payload?.getClaim("role")?.asString()
+    val userId = principal?.payload?.getClaim("userId")?.asString()
+
+    val id = call.parameters["id"] ?: return false
+
+    return if (role == Role.ADMIN.name || userId == id) {
+        true
+    }
+    else {
+        call.respond(HttpStatusCode.Forbidden, "You are not allowed to access this resource, you can only access your own data")
+        false
+    }
+}
+
+suspend fun PipelineContext<Unit, ApplicationCall>.hasOwner(): Boolean {
+    val principal = call.authentication.principal<JWTPrincipal>()
+    val userId = principal?.payload?.getClaim("userId")?.asString()
+
+    val id = call.parameters["id"] ?: return false
+
+    return if (userId == id) {
+        true
+    }
+    else {
+        call.respond(HttpStatusCode.Forbidden, "You are not allowed to access this resource, you can only access your own data")
+        false
+    }
 }
 
 suspend fun PipelineContext<Unit, ApplicationCall>.isAuthenticated(): Boolean {
     val principal = call.authentication.principal<JWTPrincipal>()
 
-    if (principal != null) { return true }
-
-    call.respond(HttpStatusCode.Forbidden, "You are not allowed to access this resource, you need to be authenticated")
-    return false
+    return if (principal != null) {
+        true
+    }
+    else {
+        call.respond(HttpStatusCode.Forbidden, "You are not allowed to access this resource, you need to be authenticated")
+        false
+    }
 }

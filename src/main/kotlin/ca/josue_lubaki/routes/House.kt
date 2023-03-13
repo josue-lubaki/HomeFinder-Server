@@ -7,10 +7,11 @@ import ca.josue_lubaki.data.models.Address
 import ca.josue_lubaki.data.models.Owner
 import ca.josue_lubaki.data.request.house.HouseRequest
 import ca.josue_lubaki.data.response.address.AddressResponse
-import ca.josue_lubaki.data.response.house.ApiResponse
+import ca.josue_lubaki.data.models.ApiResponse
 import ca.josue_lubaki.data.response.house.HouseDto
 import ca.josue_lubaki.data.response.house.HouseResponse
 import ca.josue_lubaki.data.response.owner.OwnerResponse
+import ca.josue_lubaki.tools.Utils.Companion.initPageAndLimit
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -18,6 +19,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.bson.types.ObjectId
 import org.koin.ktor.ext.inject
+import kotlin.properties.Delegates
 
 /**
  * @author Josue Lubaki
@@ -41,7 +43,8 @@ fun Route.housesRoutes() {
             }
 
             // verify if the house already exists
-            val owner = ownerDataSource.getOwnerByUsername(request.ownerUsername)
+            val ownerApiResponse = ownerDataSource.getOwnerByUsername(request.ownerUsername)
+            val owner = ownerApiResponse.data.first()
             val address = addressDataSource.getAddressByStreetAndNumber(request.street, request.number)
 
             if (owner != null && address != null){
@@ -78,7 +81,7 @@ fun Route.housesRoutes() {
             }
 
             // get the owner and address
-            val ownerInserted = ownerDataSource.getOwnerByUsername(request.ownerUsername)!!
+            val ownerInserted = ownerDataSource.getOwnerByUsername(request.ownerUsername).data.first()!!
             val addressInserted = addressDataSource.getAddressByStreetAndNumber(request.street, request.number)!!
             val houseToInsert = request.toHouse(addressInserted, ownerInserted)
             val newHouse = houseDataSource.insertHouse(houseToInsert)
@@ -90,15 +93,14 @@ fun Route.housesRoutes() {
         // http://localhost:8080/api/v1/houses
         get {
 
-            val page = call.request.queryParameters["page"]?.toInt() ?: 1
-            val limit = call.request.queryParameters["limit"]?.toInt() ?: 5
+            val (page, limit) = initPageAndLimit()
 
             val apiResponse = houseDataSource.getAllHouses(page, limit)
 
             val houseResponse = mutableListOf<HouseDto>()
             apiResponse.data.forEach {
                 if (it == null) return@forEach
-                val owner = ownerDataSource.getOwnerById(it.owner.id)
+                val owner = ownerDataSource.getOwnerById(it.owner.id).data.first()
                 val address = addressDataSource.getAddressById(it.address.id)
                 houseResponse.add(houseDto(it.toResponse(), address, owner))
             }
@@ -131,7 +133,7 @@ fun Route.housesRoutes() {
                 return@get
             }
 
-            val owner = ownerDataSource.getOwnerById(first.owner.id)
+            val owner = ownerDataSource.getOwnerById(first.owner.id).data.first()
             val address = addressDataSource.getAddressById(first.address.id)
             val houseResponse = houseDto(first.toResponse(), address, owner)
 
@@ -169,7 +171,7 @@ fun Route.housesRoutes() {
             }
 
             kotlin.runCatching {
-                val owner = ownerDataSource.getOwnerById(first.owner.id)!!.copy(
+                val owner = ownerDataSource.getOwnerById(first.owner.id).data.first()!!.copy(
                     id = first.owner.id,
                     username = request.ownerUsername,
                     firstName = request.ownerFirstName,
@@ -190,9 +192,9 @@ fun Route.housesRoutes() {
 
                 val addressToUpdate = address.toDomain().copy(id = ObjectId(address.id))
                 val updatedAddress = addressDataSource.updateAddress(addressToUpdate)
-                val updatedOwner = ownerDataSource.updateOwner(owner.toDomain().copy(id = ObjectId(first.owner.id)))
+                val updatedOwnerApiResponse = ownerDataSource.updateOwner(owner.toDomain().copy(id = ObjectId(first.owner.id)))
 
-                if(!updatedAddress || !updatedOwner){
+                if(!updatedAddress || !updatedOwnerApiResponse.success){
                     call.respond(HttpStatusCode.InternalServerError, "An error occurred")
                     return@put
                 }
@@ -246,7 +248,7 @@ fun Route.housesRoutes() {
         delete("/{id}"){
             if (!isAdmin()) return@delete
 
-            val responseBadRequest = ApiResponse(
+            val responseBadRequest = ApiResponse<HouseDto>(
                 success = false,
                 message = "Invalid id"
             )
@@ -277,7 +279,7 @@ fun Route.housesRoutes() {
 
             if (apiResponse.success) { call.respond(HttpStatusCode.NoContent, apiResponse) }
             else {
-                val response = ApiResponse(
+                val response = ApiResponse<HouseDto>(
                     success = false,
                     message = "An error occurred while deleting the house"
                 )

@@ -1,5 +1,6 @@
 package ca.josue_lubaki.data.datasource
 
+import ca.josue_lubaki.data.models.ApiResponse
 import ca.josue_lubaki.data.models.Owner
 import ca.josue_lubaki.data.response.owner.OwnerResponse
 
@@ -9,10 +10,10 @@ import ca.josue_lubaki.data.response.owner.OwnerResponse
  * @since 2023-03-05
  */
 interface OwnerDataSource {
-    suspend fun getAllOwners(): List<OwnerResponse>
-    suspend fun getOwnerById(id: String): OwnerResponse?
-    suspend fun getOwnerByUsername(username: String): OwnerResponse?
-    suspend fun insertOwner(owner: Owner): Boolean
-    suspend fun updateOwner(owner: Owner): Boolean
-    suspend fun deleteOwner(id: String): Boolean
+    suspend fun getAllOwners(page : Int = 1, limit : Int = 5): ApiResponse<OwnerResponse>
+    suspend fun getOwnerById(id: String): ApiResponse<OwnerResponse>
+    suspend fun getOwnerByUsername(username: String): ApiResponse<OwnerResponse>
+    suspend fun insertOwner(owner: Owner): ApiResponse<Boolean>
+    suspend fun updateOwner(owner: Owner): ApiResponse<Boolean>
+    suspend fun deleteOwner(id: String): ApiResponse<Boolean>
 }

@@ -25,6 +25,7 @@ fun Application.configureRouting() {
             // http://localhost:8080/api/v1/
             route("api/v1/") {
                 this.authenticate {
+                    userRoutes()
                     getSecretInfo()
                     authenticate()
                     housesRoutes()

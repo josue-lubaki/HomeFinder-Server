@@ -2,6 +2,7 @@ package ca.josue_lubaki.routes
 
 import ca.josue_lubaki.data.datasource.OwnerDataSource
 import ca.josue_lubaki.data.request.owner.OwnerRequest
+import ca.josue_lubaki.tools.Utils.Companion.initPageAndLimit
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -31,22 +32,25 @@ fun Route.ownerRoutes() {
             }
 
             // verify if the owner already exists
-            val owner = ownerDataSource.getOwnerByUsername(request.username)
+            val ownerApiResponse = ownerDataSource.getOwnerByUsername(request.username)
+            val owner = ownerApiResponse.data.first()
             if (owner != null){
                 call.respond(HttpStatusCode.Conflict, "This owner already exists")
                 return@post
             }
 
             val ownerRequest = request.toOwner()
-            val newOwner = ownerDataSource.insertOwner(ownerRequest)
-            if(newOwner){ call.respond(HttpStatusCode.Created, "Owner created") }
+            val newOwnerApiResponse = ownerDataSource.insertOwner(ownerRequest)
+            if(newOwnerApiResponse.success){ call.respond(HttpStatusCode.Created, newOwnerApiResponse) }
             else { call.respond(HttpStatusCode.InternalServerError, "An error occurred") }
         }
 
         // Get all owners [GET]
         // http://localhost:8080/api/v1/owners
         get {
-            val owners = ownerDataSource.getAllOwners()
+            val (page, limit) = initPageAndLimit()
+
+            val owners = ownerDataSource.getAllOwners(page, limit)
             call.respond(owners)
         }
 
@@ -57,11 +61,17 @@ fun Route.ownerRoutes() {
                 call.respond(HttpStatusCode.BadRequest, "Invalid id")
                 return@get
             }
-            val owner = ownerDataSource.getOwnerById(id)
+
+            val ownerApiResponse = ownerDataSource.getOwnerById(id)
+            val owner = ownerApiResponse.data.first()
+
             if (owner != null){
-                call.respond(HttpStatusCode.OK, owner)
+                call.respond(HttpStatusCode.OK, ownerApiResponse)
             } else {
-                call.respond(HttpStatusCode.NotFound, "Owner not found")
+                call.respond(HttpStatusCode.NotFound, ownerApiResponse.copy(
+                    success = false,
+                    message = "Owner not found"
+                ))
             }
         }
 
@@ -79,9 +89,9 @@ fun Route.ownerRoutes() {
             }
 
             val ownerRequest = request.toOwner().copy(id = ObjectId(id))
-            val updatedOwner = ownerDataSource.updateOwner(ownerRequest)
-            if(updatedOwner){
-                call.respond(HttpStatusCode.OK, "Owner updated")
+            val updatedOwnerApiResponse = ownerDataSource.updateOwner(ownerRequest)
+            if(updatedOwnerApiResponse.success){
+                call.respond(HttpStatusCode.OK, updatedOwnerApiResponse)
             } else {
                 call.respond(HttpStatusCode.InternalServerError, "An error occurred")
             }
@@ -97,8 +107,8 @@ fun Route.ownerRoutes() {
             }
             ObjectId.isValid(id)
 
-            val deletedOwner = ownerDataSource.deleteOwner(id)
-            if(deletedOwner){ call.respond(HttpStatusCode.OK, "Owner deleted") }
+            val deletedOwnerApiResponse = ownerDataSource.deleteOwner(id)
+            if(deletedOwnerApiResponse.success){ call.respond(HttpStatusCode.NoContent) }
             else { call.respond(HttpStatusCode.InternalServerError, "An error occurred") }
         }
     }
