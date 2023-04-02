@@ -58,13 +58,15 @@ fun Route.housesRoutes() {
             // create the owner if it doesn't exist
             if(owner == null){
                 val newOwner = Owner(
+                    uuid = 0,
                     username = request.ownerUsername,
                     firstName = request.ownerFirstName,
                     lastName = request.ownerLastName,
                     email = request.ownerEmail,
                     phone = request.ownerPhone
                 )
-                ownerDataSource.insertOwner(newOwner)
+                val nextUuid = ownerDataSource.getOwnersSize() + 1
+                ownerDataSource.insertOwner(newOwner.apply { uuid = nextUuid })
             }
 
             // create the address if it doesn't exist
@@ -84,7 +86,8 @@ fun Route.housesRoutes() {
             val ownerInserted = ownerDataSource.getOwnerByUsername(request.ownerUsername).data.first()!!
             val addressInserted = addressDataSource.getAddressByStreetAndNumber(request.street, request.number)!!
             val houseToInsert = request.toHouse(addressInserted, ownerInserted)
-            val newHouse = houseDataSource.insertHouse(houseToInsert)
+            val nextUuid = houseDataSource.getHouseSize() + 1
+            val newHouse = houseDataSource.insertHouse(houseToInsert.apply { uuid = nextUuid })
 
             call.respond(status = HttpStatusCode.OK, message = newHouse)
         }
@@ -295,6 +298,7 @@ private fun houseDto(
     owner: OwnerResponse?
 ) = HouseDto(
     id = house.id,
+    uuid = house.uuid,
     description = house.description,
     images = house.images,
     price = house.price,
@@ -315,6 +319,7 @@ private fun houseDto(
     pool = house.pool,
     owner = OwnerResponse(
         id = owner!!.id,
+        uuid = owner.uuid,
         username = owner.username,
         firstName = owner.firstName,
         lastName = owner.lastName,

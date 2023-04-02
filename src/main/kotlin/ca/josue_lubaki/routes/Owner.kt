@@ -40,7 +40,8 @@ fun Route.ownerRoutes() {
             }
 
             val ownerRequest = request.toOwner()
-            val newOwnerApiResponse = ownerDataSource.insertOwner(ownerRequest)
+            val nextUuid = ownerDataSource.getOwnersSize() + 1
+            val newOwnerApiResponse = ownerDataSource.insertOwner(ownerRequest.apply { uuid = nextUuid })
             if(newOwnerApiResponse.success){ call.respond(HttpStatusCode.Created, newOwnerApiResponse) }
             else { call.respond(HttpStatusCode.InternalServerError, "An error occurred") }
         }

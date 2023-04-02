@@ -12,6 +12,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserResponse (
     val id: String,
+    val uuid: Long,
     val username: String,
     val email: String,
     val firstName: String,
@@ -23,6 +24,7 @@ data class UserResponse (
     fun toDto() : UserDto {
         return UserDto(
             id = id,
+            uuid = uuid,
             username = username,
             email = email,
             firstName = firstName,

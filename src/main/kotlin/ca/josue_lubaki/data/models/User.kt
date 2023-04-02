@@ -14,6 +14,7 @@ import org.bson.types.ObjectId
 @Serializable
 data class User (
     @Contextual @BsonId val id: ObjectId = ObjectId(),
+    var uuid: Long,
     val username: String,
     val password: String,
     val email: String,
@@ -25,6 +26,7 @@ data class User (
     fun toResponse() : UserResponse {
         return UserResponse(
             id = id.toString(),
+            uuid = uuid,
             username = username,
             email = email,
             firstName = firstName,

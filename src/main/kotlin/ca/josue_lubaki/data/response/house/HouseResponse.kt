@@ -14,6 +14,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class HouseResponse (
     val id: String,
+    val uuid : Long,
     val description: String,
     val images: List<String>,
     val price: Long,
@@ -28,6 +29,7 @@ data class HouseResponse (
 ) {
     fun toDomain(): House {
         return House(
+            uuid = uuid,
             description = description,
             images = images,
             price = price,
@@ -45,6 +47,7 @@ data class HouseResponse (
     fun toDto() : HouseDto {
         return HouseDto(
             id = id,
+            uuid = uuid,
             description = description,
             images = images,
             price = price,
@@ -65,6 +68,7 @@ data class HouseResponse (
             pool = pool,
             owner = OwnerResponse(
                 id = owner,
+                uuid = 0,
                 username = "",
                 firstName = "",
                 lastName = "",

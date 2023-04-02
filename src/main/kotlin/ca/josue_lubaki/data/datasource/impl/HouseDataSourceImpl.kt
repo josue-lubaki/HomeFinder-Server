@@ -11,7 +11,9 @@ import com.mongodb.client.model.Filters
 import io.ktor.http.*
 import org.bson.types.ObjectId
 import org.litote.kmongo.coroutine.CoroutineDatabase
+import org.litote.kmongo.coroutine.toList
 import org.litote.kmongo.eq
+import org.reactivestreams.Publisher
 
 /**
  * @author Josue Lubaki
@@ -98,5 +100,9 @@ class HouseDataSourceImpl(
             data = houses.find(House::address eq id).toList().map { it.toDto() },
             lastUpdated = System.currentTimeMillis()
         )
+    }
+
+    override suspend fun getHouseSize(): Long {
+        return houses.countDocuments()
     }
 }

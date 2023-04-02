@@ -62,6 +62,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.registerUser(
 
     val saltedHash = hashingService.generateSaltedHash(request.password)
     val user = User(
+        uuid = 0,
         username = request.username,
         password = saltedHash.hash,
         salt = saltedHash.salt,
@@ -70,7 +71,8 @@ suspend fun PipelineContext<Unit, ApplicationCall>.registerUser(
         lastName = request.lastName
     )
 
-    val apiResponse = userDataSource.insertUser(user)
+    val nextUuid = userDataSource.getUsersCount() + 1
+    val apiResponse = userDataSource.insertUser(user.apply { uuid = nextUuid })
     if (!apiResponse.success) {
         call.respond(HttpStatusCode.Conflict)
         return

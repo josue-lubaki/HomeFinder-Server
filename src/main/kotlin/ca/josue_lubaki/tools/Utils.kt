@@ -7,6 +7,8 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
 import org.litote.kmongo.coroutine.CoroutineCollection
+import java.util.*
+import kotlin.math.abs
 import kotlin.properties.Delegates
 
 /**
@@ -61,6 +63,11 @@ class Utils {
                 )
             }
             return Pair(page, limit)
+        }
+
+        fun generateIntUUID(): Int {
+            val uuid = UUID.randomUUID()
+            return abs(uuid.hashCode())
         }
     }
 }

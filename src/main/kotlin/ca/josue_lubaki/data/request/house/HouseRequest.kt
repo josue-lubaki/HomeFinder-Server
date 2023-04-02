@@ -4,6 +4,7 @@ import ca.josue_lubaki.data.models.House
 import ca.josue_lubaki.data.models.HouseType
 import ca.josue_lubaki.data.response.address.AddressResponse
 import ca.josue_lubaki.data.response.owner.OwnerResponse
+import ca.josue_lubaki.tools.Utils.Companion.generateIntUUID
 import kotlinx.serialization.Serializable
 
 /**
@@ -36,6 +37,7 @@ data class HouseRequest (
 ){
     fun toHouse(address : AddressResponse, owner : OwnerResponse) = House(
         description = description,
+        uuid = 0,
         images = images,
         price = price,
         address = address.id,

@@ -3,6 +3,7 @@ package ca.josue_lubaki.data.response.house
 import ca.josue_lubaki.data.response.address.AddressResponse
 import ca.josue_lubaki.data.response.owner.OwnerResponse
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 /**
  * @author Josue Lubaki
@@ -12,6 +13,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class HouseDto (
     val id: String,
+    val uuid: Long,
     val description: String,
     val images: List<String>,
     val price: Long,
@@ -27,6 +29,7 @@ data class HouseDto (
     fun toResponse(): HouseResponse {
         return HouseResponse(
             id = id,
+            uuid = uuid,
             description = description,
             images = images,
             price = price,

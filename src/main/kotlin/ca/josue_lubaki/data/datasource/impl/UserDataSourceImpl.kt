@@ -80,4 +80,8 @@ class UserDataSourceImpl(
             lastUpdated = System.currentTimeMillis()
         )
     }
+
+    override suspend fun getUsersCount(): Long {
+        return users.countDocuments()
+    }
 }

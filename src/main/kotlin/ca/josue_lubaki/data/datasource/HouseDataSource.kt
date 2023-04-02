@@ -3,6 +3,7 @@ package ca.josue_lubaki.data.datasource
 import ca.josue_lubaki.data.models.House
 import ca.josue_lubaki.data.models.ApiResponse
 import ca.josue_lubaki.data.response.house.HouseDto
+import org.reactivestreams.Publisher
 
 /**
  * @author Josue Lubaki
@@ -18,4 +19,5 @@ interface HouseDataSource {
     suspend fun deleteHouse(id: String): ApiResponse<HouseDto>
     suspend fun getHouseByAddressId(id: String): ApiResponse<HouseDto>
     suspend fun getAllHousesByAddressId(id: String): ApiResponse<HouseDto>
+    suspend fun getHouseSize() : Long
 }

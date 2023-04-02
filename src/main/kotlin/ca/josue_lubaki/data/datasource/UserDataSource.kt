@@ -16,4 +16,5 @@ interface UserDataSource {
     suspend fun insertUser(user: User): ApiResponse<Boolean>
     suspend fun updateUser(user: User): ApiResponse<Boolean>
     suspend fun deleteUser(id: String): ApiResponse<Boolean>
+    suspend fun getUsersCount(): Long
 }

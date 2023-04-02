@@ -11,6 +11,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OwnerResponse(
     val id: String,
+    var uuid: Long,
     val username: String,
     val firstName : String,
     val lastName : String,
@@ -19,6 +20,7 @@ data class OwnerResponse(
 ) {
     fun toDomain(): Owner {
         return Owner(
+            uuid = uuid,
             username = username,
             firstName = firstName,
             lastName = lastName,

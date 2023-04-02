@@ -4,8 +4,10 @@ import ca.josue_lubaki.data.response.address.AddressResponse
 import ca.josue_lubaki.data.response.house.HouseDto
 import ca.josue_lubaki.data.response.house.HouseResponse
 import ca.josue_lubaki.data.response.owner.OwnerResponse
+import ca.josue_lubaki.tools.Utils.Companion.generateIntUUID
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
+import java.util.UUID
 
 /**
  * @author Josue Lubaki
@@ -14,6 +16,7 @@ import org.bson.types.ObjectId
  */
 data class House (
     @BsonId val id: ObjectId = ObjectId(),
+    var uuid: Long,
     val description : String,
     val images : List<String>,
     val price : Long,
@@ -28,6 +31,7 @@ data class House (
 ) {
     fun toResponse() = HouseResponse(
         id = id.toString(),
+        uuid = uuid,
         description = description,
         images = images,
         price = price,
@@ -44,6 +48,7 @@ data class House (
     fun toDto() : HouseDto {
         return HouseDto(
             id = id.toString(),
+            uuid = uuid,
             description = description,
             images = images,
             price = price,
@@ -64,6 +69,7 @@ data class House (
             pool = pool,
             owner = OwnerResponse(
                 id = owner,
+                uuid = 0,
                 username = "",
                 firstName = "",
                 lastName = "",

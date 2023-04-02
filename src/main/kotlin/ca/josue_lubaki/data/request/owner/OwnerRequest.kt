@@ -17,6 +17,7 @@ data class OwnerRequest (
     val phone: String,
 ) {
     fun toOwner() = Owner(
+        uuid = 0,
         username = username,
         firstName = firstName,
         lastName = lastName,

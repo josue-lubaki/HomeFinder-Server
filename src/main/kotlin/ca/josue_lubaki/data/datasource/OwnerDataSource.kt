@@ -16,4 +16,6 @@ interface OwnerDataSource {
     suspend fun insertOwner(owner: Owner): ApiResponse<Boolean>
     suspend fun updateOwner(owner: Owner): ApiResponse<Boolean>
     suspend fun deleteOwner(id: String): ApiResponse<Boolean>
+
+    suspend fun getOwnersSize() : Long
 }

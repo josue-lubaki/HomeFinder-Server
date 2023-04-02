@@ -79,4 +79,8 @@ class OwnerDataSourceImpl(
             lastUpdated = System.currentTimeMillis()
         )
     }
+
+    override suspend fun getOwnersSize(): Long {
+        return owners.countDocuments()
+    }
 }
