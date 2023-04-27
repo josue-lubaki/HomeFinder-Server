@@ -24,7 +24,23 @@ data class HouseDto (
     val type: String,
     val yearBuilt: Int,
     val pool: Boolean,
-    val owner: OwnerResponse
+    val owner: OwnerResponse,
+    val kitchen: Int,
+    val parking: Int,
+    val rating : Int,
+    val isFeature: Boolean,
+    val isSold: Boolean,
+    val toRent: Boolean,
+    val toSell: Boolean,
+    val hasGarage: Boolean,
+    val hasTerrace: Boolean,
+    val isHeating: Boolean,
+    val isFurnished : Boolean,
+    val isPetFriendly : Boolean,
+    val hasAirConditioning : Boolean,
+    val hasInternetAccess : Boolean,
+    val hasWasher : Boolean,
+    val hasElectricity : Boolean,
 ) {
     fun toResponse(): HouseResponse {
         return HouseResponse(
@@ -40,7 +56,23 @@ data class HouseDto (
             type = type,
             yearBuilt = yearBuilt,
             pool = pool,
-            owner = owner.id
+            owner = owner.id,
+            kitchen = kitchen,
+            parking = parking,
+            rating = rating,
+            isFeature = isFeature,
+            isSold = isSold,
+            toRent = toRent,
+            toSell = toSell,
+            hasGarage = hasGarage,
+            hasTerrace = hasTerrace,
+            isHeating = isHeating,
+            isFurnished = isFurnished,
+            isPetFriendly = isPetFriendly,
+            hasAirConditioning = hasAirConditioning,
+            hasInternetAccess = hasInternetAccess,
+            hasWasher = hasWasher,
+            hasElectricity = hasElectricity,
         )
     }
 }
