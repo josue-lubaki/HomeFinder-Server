@@ -36,7 +36,7 @@ data class HouseRequest (
     val ownerPhone : String,
     val kitchen: Int,
     val parking: Int,
-    val rating : Int,
+    val rating : Double,
     val isFeature: Boolean,
     val isSold: Boolean,
     val toRent: Boolean,

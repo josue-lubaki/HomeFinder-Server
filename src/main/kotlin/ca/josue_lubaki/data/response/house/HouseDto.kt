@@ -27,7 +27,7 @@ data class HouseDto (
     val owner: OwnerResponse,
     val kitchen: Int,
     val parking: Int,
-    val rating : Int,
+    val rating : Double,
     val isFeature: Boolean,
     val isSold: Boolean,
     val toRent: Boolean,
